@@ -8,38 +8,24 @@
  * @format
  */
 
-import React, {type PropsWithChildren} from 'react';
-import {
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import React from 'react';
 
 //@ts-ignore
 import { Amplify } from 'aws-amplify';
 import awsconfig from './aws-exports';
 //@ts-ignore
 import { Authenticator } from 'aws-amplify-react-native';
-import Home from './src/screens/Home';
+import { NavigationContainer } from '@react-navigation/native';
+import Navigation from './src/components/Navigation';
 
 Amplify.configure(awsconfig);
 
 function App() {
   return (
-    <View style={styles.container}>
-      <Authenticator usernameAttributes='email'>
-        <Home/>
-      </Authenticator>
-    </View>
+    <Authenticator usernameAttributes='email'>
+        <Navigation/>
+    </Authenticator>
   );
 }
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
 
 export default App;
