@@ -14,18 +14,38 @@ import React from 'react';
 import { Amplify } from 'aws-amplify';
 import awsconfig from './aws-exports';
 //@ts-ignore
-import { Authenticator } from 'aws-amplify-react-native';
-import { NavigationContainer } from '@react-navigation/native';
+import { Authenticator, SignIn, ConfirmSignIn, ConfirmSignUp, ForgotPassword} from 'aws-amplify-react-native';
 import Navigation from './src/components/Navigation';
+import { SafeAreaView, StyleSheet, View } from 'react-native';
+import SignUp from './src/components/SignUp';
 
 Amplify.configure(awsconfig);
 
 function App() {
   return (
-    <Authenticator usernameAttributes='email'>
-        <Navigation/>
+    <View style={styles.container}>
+      <Authenticator usernameAttributes='email'
+     hideDefault={true} 
+     authState='signIn'
+     onStateChange={(authState: string)=> console.log('authState:',authState)}>
+      <SignIn />
+      <SignUp/>
+      <ConfirmSignUp/>
+      <ConfirmSignIn/>
+      <ForgotPassword/>
+      <Navigation/>
     </Authenticator>
+    </View>
   );
+}
+
+const styles = {
+  container: {
+    flex: 1,
+    justifyContent: 'center' as const,
+    alignItems: 'center' as const,
+    backgroundColor: 'red',
+  }
 }
 
 export default App;
