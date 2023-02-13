@@ -24,8 +24,18 @@ export default function SignUp(props: any){
                     username: email,
                     password: password,
                 });
+
+                props.onStateChange('confirmSignUp');
+
             }catch(error: any){
-                console.log(error);
+                if(error instanceof Error){
+                    if(error.name === 'UsernameExistsException'){
+                        setEmailError('This email is already in use by an existing account!');
+                        setPasswordError(null);
+                    }else{
+                        setEmailError(error.message);
+                    }
+                }
             }
         }else{
             setEmailError(emailErrors);
@@ -33,7 +43,10 @@ export default function SignUp(props: any){
         }
     }
 
-    if(props.authState === 'signUp'){
+    if(props.authState !== 'signUp'){
+        return (<></>);
+    }
+
     return (
         <View style={styles.container}>
             <Text style={styles.text}>Sign Up</Text>
@@ -67,9 +80,7 @@ export default function SignUp(props: any){
                 </TouchableOpacity>
             </View>
         </View>
-    )}else{
-        return (<></>);
-    }
+    );
 }
 
 const styles = StyleSheet.create({
@@ -100,7 +111,7 @@ const styles = StyleSheet.create({
         width: screenWidth - 20,
         borderColor: 'black',
         borderWidth: 1,
-        color: 'lightgray',
+        color: 'gray',
         fontSize: 14,
         marginBottom: 3,
     },
