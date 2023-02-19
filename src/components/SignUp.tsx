@@ -25,6 +25,8 @@ export default function SignUp(props: any){
                     password: password,
                 });
 
+                console.log(user);
+
                 props.onStateChange('confirmSignUp');
 
             }catch(error: any){

@@ -1,22 +1,19 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, TextInput, StyleSheet, Dimensions } from 'react-native';
+import React, { useState } from "react";
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Dimensions } from "react-native";
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
 
-function ConfirmSignUp(props: any){
-
+function ForgotPassword(props: any){
     const [email, setEmail] = useState<string>('');
     const [emailError, setEmailError] = useState<string | null>(null);
-    const [confirmationCode, setConfirmationCode] = useState<string>('');
     
-    if(props.authState !== 'confirmSignUp'){
+    if(props.authState !== 'forgotPassword'){
         return(<></>);
     }
-    
     return (
         <View style={styles.container}>
-            <Text style={styles.text}>Sign Up</Text>
+            <Text style={styles.text}>Reset Your Password</Text>
 
             <View style={styles.inputContainer}>
                 <Text style={styles.label}>Email</Text>
@@ -26,19 +23,11 @@ function ConfirmSignUp(props: any){
                 )}
             </View>
 
-            <View style={styles.inputContainer}>
-                <Text style={styles.label}>Enter your Confirmation Code</Text>
-                <TextInput style={styles.textInput} onChangeText={(text)=> setConfirmationCode(text)} value={confirmationCode}></TextInput>
-            </View>
-
-            <TouchableOpacity style={styles.button} onPress={()=> console.log('confirming code...')}>
-                <Text style={styles.buttonText}>Confirm</Text>
+            <TouchableOpacity style={styles.button} onPress={()=> console.log('Sending password reset...')}>
+                <Text style={styles.buttonText}>Send</Text>
             </TouchableOpacity>
 
             <View style={styles.secondaryButtonContainer}>
-                <TouchableOpacity style={styles.secondaryButton} onPress={()=> console.log('resending code...')}>
-                    <Text style={styles.secondaryButtonText}>Resend Code</Text>
-                </TouchableOpacity>
                 <TouchableOpacity style={styles.secondaryButton} onPress={()=> props.onStateChange('signIn')}>
                     <Text style={styles.secondaryButtonText}>Back to Sign In</Text>
                 </TouchableOpacity>
@@ -47,7 +36,7 @@ function ConfirmSignUp(props: any){
     );
 }
 
-export default ConfirmSignUp;
+export default ForgotPassword;
 
 const styles = StyleSheet.create({
     container: {
