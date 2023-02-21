@@ -1,17 +1,24 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, Dimensions } from 'react-native';
+import { authStates } from './Authentication';
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
 
-export default function SignIn(props: any){
+interface SignInProps{
+    authState: string;
+    onStateChange: (state: authStates)=> void;
+
+}
+
+export default function SignIn({authState, onStateChange}: SignInProps){
 
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
     const [emailError, setEmailError] = useState<string | null>(null);
     const [passwordError, setPasswordError] = useState<string | null>(null);
     
-    if(props.authState !== 'signIn'){
+    if(authState !== 'signIn'){
         return(<></>);
     }
 
@@ -40,10 +47,10 @@ export default function SignIn(props: any){
             </TouchableOpacity>
 
             <View style={styles.secondaryButtonContainer}>
-                <TouchableOpacity style={styles.secondaryButton} onPress={()=> props.onStateChange('forgotPassword')}>
+                <TouchableOpacity style={styles.secondaryButton} onPress={()=> onStateChange('forgotPassword')}>
                     <Text style={styles.secondaryButtonText}>Forgot Password?</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.secondaryButton} onPress={()=> props.onStateChange('signUp')}>
+                <TouchableOpacity style={styles.secondaryButton} onPress={()=> onStateChange('signUp')}>
                     <Text style={styles.secondaryButtonText}>Sign Up</Text>
                 </TouchableOpacity>
             </View>

@@ -10,7 +10,7 @@ const screenHeight = Dimensions.get('window').height;
 
 interface SignUpProps{
     authState: string;
-    onStateChange: (state: authStates)=> void;
+    onStateChange: (state: authStates, defaultEmail?: string)=> void;
 }
 
 export default function SignUp({authState, onStateChange}: SignUpProps){
@@ -60,7 +60,7 @@ export default function SignUp({authState, onStateChange}: SignUpProps){
                         }
                         const cognitoUser = result?.user;
                         console.log(cognitoUser?.getUsername());
-                        onStateChange('confirmSignUp');
+                        onStateChange('confirmSignUp', cognitoUser?.getUsername());
                     }
                     );
  

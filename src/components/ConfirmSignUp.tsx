@@ -1,22 +1,31 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, TextInput, StyleSheet, Dimensions } from 'react-native';
+import { authStates } from './Authentication';
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
 
-function ConfirmSignUp(props: any){
+interface ConfirmSignUpProps{
+    authState: string;
+    onStateChange: (state: authStates)=> void;
+    defaultEmail?: string;
+}
 
-    const [email, setEmail] = useState<string>('');
+function ConfirmSignUp({authState, onStateChange, defaultEmail}: ConfirmSignUpProps){
+
+    const [email, setEmail] = useState<string>(defaultEmail ?? '');
     const [emailError, setEmailError] = useState<string | null>(null);
     const [confirmationCode, setConfirmationCode] = useState<string>('');
     
-    if(props.authState !== 'confirmSignUp'){
+    if(authState !== 'confirmSignUp'){
         return(<></>);
     }
+
+    
     
     return (
         <View style={styles.container}>
-            <Text style={styles.text}>Sign Up</Text>
+            <Text style={styles.text}>Sign Up Verification</Text>
 
             <View style={styles.inputContainer}>
                 <Text style={styles.label}>Email</Text>
@@ -39,7 +48,7 @@ function ConfirmSignUp(props: any){
                 <TouchableOpacity style={styles.secondaryButton} onPress={()=> console.log('resending code...')}>
                     <Text style={styles.secondaryButtonText}>Resend Code</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.secondaryButton} onPress={()=> props.onStateChange('signIn')}>
+                <TouchableOpacity style={styles.secondaryButton} onPress={()=> onStateChange('signIn')}>
                     <Text style={styles.secondaryButtonText}>Back to Sign In</Text>
                 </TouchableOpacity>
             </View>

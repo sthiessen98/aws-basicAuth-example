@@ -17,8 +17,6 @@ import awsconfig from './aws-exports';
 import { Authenticator, ConfirmSignIn } from 'aws-amplify-react-native';
 import Navigation from './src/components/Navigation';
 import { SafeAreaView, StyleSheet, View } from 'react-native';
-import ForgotPassword from './src/components/ForgotPassword';
-import ConfirmSignUp from './src/components/ConfirmSignUp';
 import Authentication from './src/components/Authentication';
 
 Amplify.configure(awsconfig);
@@ -37,6 +35,7 @@ const styles = {
     flex: 1,
     justifyContent: 'center' as const,
     alignItems: 'center' as const,
+    backgroundColor: 'white',
   }
 }
 
