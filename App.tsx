@@ -17,27 +17,17 @@ import awsconfig from './aws-exports';
 import { Authenticator, ConfirmSignIn } from 'aws-amplify-react-native';
 import Navigation from './src/components/Navigation';
 import { SafeAreaView, StyleSheet, View } from 'react-native';
-import SignUp from './src/components/SignUp';
-import SignIn from './src/components/SignIn';
 import ForgotPassword from './src/components/ForgotPassword';
 import ConfirmSignUp from './src/components/ConfirmSignUp';
+import Authentication from './src/components/Authentication';
 
 Amplify.configure(awsconfig);
 
 function App() {
   return (
     <View style={styles.container}>
-      <Authenticator usernameAttributes='email'
-     hideDefault={true} 
-     authState='signIn'
-     onStateChange={(authState: string)=> console.log('authState:',authState)}>
-      <SignIn />
-      <SignUp/>
-      <ConfirmSignUp/>
-      <ConfirmSignIn/>
-      <ForgotPassword/>
+      <Authentication/>
       <Navigation/>
-    </Authenticator>
     </View>
   );
 }
@@ -47,7 +37,6 @@ const styles = {
     flex: 1,
     justifyContent: 'center' as const,
     alignItems: 'center' as const,
-    backgroundColor: 'red',
   }
 }
 

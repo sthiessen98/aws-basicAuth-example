@@ -2,11 +2,18 @@ import React, { useState } from 'react';
 import { View, Text, Button, TextInput, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
 import { validateEmail, validatePassword } from '../utils/validation';
 import { Auth } from 'aws-amplify';
+import { CognitoUserPool, CognitoUserAttribute } from 'amazon-cognito-identity-js';
+import { authStates } from './Authentication';
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
 
-export default function SignUp(props: any){
+interface SignUpProps{
+    authState: string;
+    onStateChange: (state: authStates)=> void;
+}
+
+export default function SignUp({authState, onStateChange}: SignUpProps){
 
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
@@ -19,33 +26,51 @@ export default function SignUp(props: any){
 
         if(!emailErrors && !passwordErrors){
             //Attempt to register new user with Cognito
-            try{
-                const user = await Auth.signUp({
-                    username: email,
-                    password: password,
-                });
+       
 
-                console.log(user);
+                const poolData = {
+                    UserPoolId: 'us-west-2_qdVfs6s32',
+                    ClientId:'6kb7ee8q3o6nh4tvufv4n37n76',
+                };
 
-                props.onStateChange('confirmSignUp');
+                const userPool = new CognitoUserPool(poolData);
 
-            }catch(error: any){
-                if(error instanceof Error){
-                    if(error.name === 'UsernameExistsException'){
-                        setEmailError('This email is already in use by an existing account!');
-                        setPasswordError(null);
-                    }else{
-                        setEmailError(error.message);
+                const attributeList = [];
+                const dataEmail = {
+                    Name: 'email',
+                    Value: email
+                };
+
+                const dataPassword = {
+                    Name: 'password',
+                    Value: password
+                };
+
+                const emailAttribute = new CognitoUserAttribute(dataEmail);
+                const passwordAttribute = new CognitoUserAttribute(dataPassword);
+                
+                attributeList.push(emailAttribute);
+
+                    userPool.signUp(email, password, attributeList, [], function(
+                        err, result
+                        ){                        
+                        if(err){
+                            setEmailError(err?.message);
+                            return;
+                        }
+                        const cognitoUser = result?.user;
+                        console.log(cognitoUser?.getUsername());
+                        onStateChange('confirmSignUp');
                     }
-                }
-            }
+                    );
+ 
         }else{
             setEmailError(emailErrors);
             setPasswordError(passwordErrors);
         }
     }
 
-    if(props.authState !== 'signUp'){
+    if(authState !== 'signUp'){
         return (<></>);
     }
 
@@ -74,10 +99,10 @@ export default function SignUp(props: any){
             </TouchableOpacity>
 
             <View style={styles.secondaryButtonContainer}>
-                <TouchableOpacity style={styles.secondaryButton} onPress={()=> props.onStateChange('confirmSignUp')}>
+                <TouchableOpacity style={styles.secondaryButton} onPress={()=> onStateChange('confirmSignUp')}>
                     <Text style={styles.secondaryButtonText}>Confirm a Code</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.secondaryButton} onPress={()=> props.onStateChange('signIn')}>
+                <TouchableOpacity style={styles.secondaryButton} onPress={()=> onStateChange('signIn')}>
                     <Text style={styles.secondaryButtonText}>Return</Text>
                 </TouchableOpacity>
             </View>
