@@ -11,15 +11,9 @@
 import React from 'react';
 
 //@ts-ignore
-import { Amplify } from 'aws-amplify';
-import awsconfig from './aws-exports';
-//@ts-ignore
-import { Authenticator, ConfirmSignIn } from 'aws-amplify-react-native';
 import Navigation from './src/components/Navigation';
-import { SafeAreaView, StyleSheet, View } from 'react-native';
+import { View } from 'react-native';
 import Authentication from './src/components/Authentication';
-
-Amplify.configure(awsconfig);
 
 function App() {
   return (

@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { View, Text, Button, TextInput, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
 import { validateEmail, validatePassword } from '../utils/validation';
-import { Auth } from 'aws-amplify';
 import { CognitoUserPool, CognitoUserAttribute } from 'amazon-cognito-identity-js';
 import { authStates } from './Authentication';
+import { initUserPool } from '../utils/config';
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
@@ -23,16 +23,9 @@ export default function SignUp({authState, onStateChange}: SignUpProps){
     async function onSubmit(){
         const emailErrors = validateEmail(email);
         const passwordErrors = validatePassword(password);
-
         if(!emailErrors && !passwordErrors){
-            //Attempt to register new user with Cognito
-       
-
-                const poolData = {
-                    UserPoolId: 'us-west-2_qdVfs6s32',
-                    ClientId:'6kb7ee8q3o6nh4tvufv4n37n76',
-                };
-
+                //Attempt to register new user with Cognito
+                const poolData = initUserPool();
                 const userPool = new CognitoUserPool(poolData);
 
                 const attributeList = [];
@@ -40,15 +33,8 @@ export default function SignUp({authState, onStateChange}: SignUpProps){
                     Name: 'email',
                     Value: email
                 };
-
-                const dataPassword = {
-                    Name: 'password',
-                    Value: password
-                };
-
                 const emailAttribute = new CognitoUserAttribute(dataEmail);
-                const passwordAttribute = new CognitoUserAttribute(dataPassword);
-                
+    
                 attributeList.push(emailAttribute);
 
                     userPool.signUp(email, password, attributeList, [], function(
