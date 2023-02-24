@@ -1,16 +1,14 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Dimensions } from "react-native";
+import { ForgotPasswordProps } from "../utils/NavigationTypes";
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
 
-function ForgotPassword(props: any){
+function ForgotPassword({navigation}: ForgotPasswordProps){
     const [email, setEmail] = useState<string>('');
     const [emailError, setEmailError] = useState<string | null>(null);
     
-    if(props.authState !== 'forgotPassword'){
-        return(<></>);
-    }
     return (
         <View style={styles.container}>
             <Text style={styles.text}>Reset Your Password</Text>
@@ -28,7 +26,7 @@ function ForgotPassword(props: any){
             </TouchableOpacity>
 
             <View style={styles.secondaryButtonContainer}>
-                <TouchableOpacity style={styles.secondaryButton} onPress={()=> props.onStateChange('signIn')}>
+                <TouchableOpacity style={styles.secondaryButton} onPress={()=> navigation.navigate('SignIn')}>
                     <Text style={styles.secondaryButtonText}>Back to Sign In</Text>
                 </TouchableOpacity>
             </View>
@@ -42,6 +40,8 @@ const styles = StyleSheet.create({
     container: {
         height: screenHeight-30,
         justifyContent: 'center',
+        marginLeft: 5,
+        marginRight: 5,
     },
     inputContainer: {
         marginBottom: 10,

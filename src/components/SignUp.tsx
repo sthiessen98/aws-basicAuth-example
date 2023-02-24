@@ -1,19 +1,14 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
 import { validateEmail, validatePassword } from '../utils/validation';
-import { CognitoUserPool, CognitoUserAttribute } from 'amazon-cognito-identity-js';
-import { authStates } from './Authentication';
+import { CognitoUserAttribute } from 'amazon-cognito-identity-js';
 import { initUserPool } from '../utils/config';
+import { SignUpProps } from '../utils/NavigationTypes';
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
 
-interface SignUpProps{
-    authState: string;
-    onStateChange: (state: authStates, defaultEmail?: string)=> void;
-}
-
-export default function SignUp({authState, onStateChange}: SignUpProps){
+export default function SignUp({navigation}: SignUpProps){
 
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
@@ -45,7 +40,7 @@ export default function SignUp({authState, onStateChange}: SignUpProps){
                         }
                         const cognitoUser = result?.user;
                         console.log(cognitoUser?.getUsername());
-                        onStateChange('confirmSignUp', cognitoUser?.getUsername());
+                        navigation.navigate('ConfirmSignUp', {defaultEmail: cognitoUser?.getUsername()});
                     }
                     );
  
@@ -53,10 +48,6 @@ export default function SignUp({authState, onStateChange}: SignUpProps){
             setEmailError(emailErrors);
             setPasswordError(passwordErrors);
         }
-    }
-
-    if(authState !== 'signUp'){
-        return (<></>);
     }
 
     return (
@@ -84,10 +75,10 @@ export default function SignUp({authState, onStateChange}: SignUpProps){
             </TouchableOpacity>
 
             <View style={styles.secondaryButtonContainer}>
-                <TouchableOpacity style={styles.secondaryButton} onPress={()=> onStateChange('confirmSignUp')}>
+                <TouchableOpacity style={styles.secondaryButton} onPress={()=> navigation.navigate('ConfirmSignUp')}>
                     <Text style={styles.secondaryButtonText}>Confirm a Code</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.secondaryButton} onPress={()=> onStateChange('signIn')}>
+                <TouchableOpacity style={styles.secondaryButton} onPress={()=> navigation.navigate('SignIn')}>
                     <Text style={styles.secondaryButtonText}>Return</Text>
                 </TouchableOpacity>
             </View>
@@ -99,6 +90,8 @@ const styles = StyleSheet.create({
     container: {
         height: screenHeight-30,
         justifyContent: 'center',
+        marginLeft: 5,
+        marginRight: 5,
     },
     inputContainer: {
         marginBottom: 10,

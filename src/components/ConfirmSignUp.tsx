@@ -1,29 +1,20 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, TextInput, StyleSheet, Dimensions } from 'react-native';
-import { authStates } from './Authentication';
 import { initUserPool } from '../utils/config';
 import { CognitoUser } from 'amazon-cognito-identity-js';
 import { validateCode, validateEmail } from '../utils/validation';
+import { ConfirmSignUpProps } from '../utils/NavigationTypes';
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
 
-interface ConfirmSignUpProps{
-    authState: string;
-    onStateChange: (state: authStates)=> void;
-    defaultEmail?: string;
-}
 
-function ConfirmSignUp({authState, onStateChange, defaultEmail}: ConfirmSignUpProps){
+function ConfirmSignUp({navigation, route }: ConfirmSignUpProps){
 
-    const [email, setEmail] = useState<string>(defaultEmail ?? '');
+    const [email, setEmail] = useState<string>(route.params?.defaultEmail ?? '');
     const [emailError, setEmailError] = useState<string | null>(null);
     const [confirmationCode, setConfirmationCode] = useState<string>('');
     const [codeError, setCodeError] = useState<string | null>(null);
-    
-    if(authState !== 'confirmSignUp'){
-        return(<></>);
-    }
 
     async function confirmNewUser(){
         const emailErrors = validateEmail(email);
@@ -45,7 +36,7 @@ function ConfirmSignUp({authState, onStateChange, defaultEmail}: ConfirmSignUpPr
                 return;
             }
             console.log(result);
-            onStateChange('signIn');
+            navigation.navigate('SignIn');
         });
         }
     }
@@ -101,7 +92,7 @@ function ConfirmSignUp({authState, onStateChange, defaultEmail}: ConfirmSignUpPr
                 <TouchableOpacity style={styles.secondaryButton} onPress={()=> resendCode()}>
                     <Text style={styles.secondaryButtonText}>Resend Code</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.secondaryButton} onPress={()=> onStateChange('signIn')}>
+                <TouchableOpacity style={styles.secondaryButton} onPress={()=> navigation.navigate('SignIn')}>
                     <Text style={styles.secondaryButtonText}>Back to Sign In</Text>
                 </TouchableOpacity>
             </View>
@@ -115,6 +106,8 @@ const styles = StyleSheet.create({
     container: {
         height: screenHeight-30,
         justifyContent: 'center',
+        marginLeft: 5,
+        marginRight: 5,
     },
     inputContainer: {
         marginBottom: 10,

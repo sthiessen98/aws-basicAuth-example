@@ -1,24 +1,13 @@
-import { AuthenticationDetails, CognitoUser } from 'amazon-cognito-identity-js';
 import React, { useContext, useState } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, Dimensions } from 'react-native';
-import { initUserPool } from '../utils/config';
 import { validateEmail, validatePassword } from '../utils/validation';
-import { authStates } from './Authentication';
-import * as AWS from 'aws-sdk/global';
-//@ts-ignore
-import { AWS_REGION, AWS_USER_POOL_ID } from '@env';
 import { SessionContext } from './Session';
+import { SignInProps } from '../utils/NavigationTypes';
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
 
-interface SignInProps{
-    authState: string;
-    onStateChange: (state: authStates)=> void;
-
-}
-
-export default function SignIn({authState, onStateChange}: SignInProps){
+export default function SignIn({navigation}: SignInProps){
 
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
@@ -26,10 +15,6 @@ export default function SignIn({authState, onStateChange}: SignInProps){
     const [passwordError, setPasswordError] = useState<string | null>(null);
 
     const { authenticate } = useContext(SessionContext);
-    
-    if(authState !== 'signIn'){
-        return(<></>);
-    }
 
     async function attemptSignIn(){
         const emailErrors = validateEmail(email);
@@ -67,10 +52,10 @@ export default function SignIn({authState, onStateChange}: SignInProps){
             </TouchableOpacity>
 
             <View style={styles.secondaryButtonContainer}>
-                <TouchableOpacity style={styles.secondaryButton} onPress={()=> onStateChange('forgotPassword')}>
+                <TouchableOpacity style={styles.secondaryButton} onPress={()=> navigation.navigate('ForgotPassword')}>
                     <Text style={styles.secondaryButtonText}>Forgot Password?</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.secondaryButton} onPress={()=> onStateChange('signUp')}>
+                <TouchableOpacity style={styles.secondaryButton} onPress={()=> navigation.navigate('SignUp')}>
                     <Text style={styles.secondaryButtonText}>Sign Up</Text>
                 </TouchableOpacity>
             </View>
