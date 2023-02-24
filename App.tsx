@@ -8,19 +8,18 @@
  * @format
  */
 
-import React from 'react';
+import React, { useState } from 'react';
 
 //@ts-ignore
 import Navigation from './src/components/Navigation';
-import { View } from 'react-native';
-import Authentication from './src/components/Authentication';
+import  Account  from './src/components/Account';
 
 function App() {
+  
   return (
-    <View style={styles.container}>
-      <Authentication/>
-      <Navigation/>
-    </View>
+    <Account>
+        <Navigation/>
+    </Account>
   );
 }
 
@@ -29,7 +28,7 @@ const styles = {
     flex: 1,
     justifyContent: 'center' as const,
     alignItems: 'center' as const,
-    backgroundColor: 'white',
+    backgroundColor: 'white'
   }
 }
 

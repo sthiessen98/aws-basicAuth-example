@@ -1,6 +1,13 @@
-import React, { useState } from 'react';
+import { AuthenticationDetails, CognitoUser } from 'amazon-cognito-identity-js';
+import React, { useContext, useState } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, Dimensions } from 'react-native';
+import { initUserPool } from '../utils/config';
+import { validateEmail, validatePassword } from '../utils/validation';
 import { authStates } from './Authentication';
+import * as AWS from 'aws-sdk/global';
+//@ts-ignore
+import { AWS_REGION, AWS_USER_POOL_ID } from '@env';
+import { SessionContext } from './Session';
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
@@ -17,9 +24,62 @@ export default function SignIn({authState, onStateChange}: SignInProps){
     const [password, setPassword] = useState<string>('');
     const [emailError, setEmailError] = useState<string | null>(null);
     const [passwordError, setPasswordError] = useState<string | null>(null);
+
+    const { authenticate } = useContext(SessionContext);
     
     if(authState !== 'signIn'){
         return(<></>);
+    }
+
+    async function attemptSignIn(){
+        const emailErrors = validateEmail(email);
+        const passwordErrors = validatePassword(password);
+        if(!emailErrors && !passwordErrors){
+            if(!!authenticate){
+                authenticate(email, password);
+            }
+                // //Attempt to SignIn with Cognito
+                // const authData = {
+                //     Username: email,
+                //     Password: password,
+                // };
+                // const authDetails = new AuthenticationDetails(authData);
+
+                // const userPool = initUserPool();
+                // const userData = {
+                //     Username: email,
+                //     Pool: userPool,
+                // };
+                // const cognitoUser = new CognitoUser(userData);
+
+                //     await cognitoUser.authenticateUser(authDetails, {
+                //         onSuccess: function(result){
+                //             const accessToken = result.getAccessToken().getJwtToken();
+                //             console.log(accessToken);
+                //             const loginKey = `cognito-idp.${AWS_REGION}.amazonaws.com/${AWS_USER_POOL_ID}`;
+                //             AWS.config.region = AWS_REGION;
+                //             AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+                //                 IdentityPoolId: '...', // your identity pool id here
+                //                 Logins: {
+                //                     // Change the key below according to the specific region your user pool is in.
+                //                     loginKey : result
+                //                         .getIdToken()
+                //                         .getJwtToken(),
+                //                 },
+                //             });
+
+
+                //         },
+                //         onFailure(err){
+                //             console.error(err.message || JSON.stringify(err));
+                //         }
+                //     }
+                //     );
+ 
+        }else{
+            setEmailError(emailErrors);
+            setPasswordError(passwordErrors);
+        }
     }
 
     return (
@@ -42,7 +102,7 @@ export default function SignIn({authState, onStateChange}: SignInProps){
                 )}
             </View>
 
-            <TouchableOpacity style={styles.button} onPress={()=> console.log('signing in...')}>
+            <TouchableOpacity style={styles.button} onPress={()=> attemptSignIn()}>
                 <Text style={styles.buttonText}>Sign In</Text>
             </TouchableOpacity>
 
@@ -63,6 +123,8 @@ const styles = StyleSheet.create({
     container: {
         height: screenHeight-30,
         justifyContent: 'center',
+        marginLeft: 5,
+        marginRight: 5,
     },
     inputContainer: {
         marginBottom: 10,

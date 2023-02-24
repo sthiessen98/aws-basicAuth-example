@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, TextInput, StyleSheet, Dimensions } from 'react-native';
 import { authStates } from './Authentication';
+import { initUserPool } from '../utils/config';
+import { CognitoUser } from 'amazon-cognito-identity-js';
+import { validateCode, validateEmail } from '../utils/validation';
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
@@ -16,11 +19,58 @@ function ConfirmSignUp({authState, onStateChange, defaultEmail}: ConfirmSignUpPr
     const [email, setEmail] = useState<string>(defaultEmail ?? '');
     const [emailError, setEmailError] = useState<string | null>(null);
     const [confirmationCode, setConfirmationCode] = useState<string>('');
+    const [codeError, setCodeError] = useState<string | null>(null);
     
     if(authState !== 'confirmSignUp'){
         return(<></>);
     }
 
+    async function confirmNewUser(){
+        const emailErrors = validateEmail(email);
+        const codeErrors = validateCode(confirmationCode)
+        if(codeErrors || emailErrors){
+            setEmailError(emailErrors);
+            setCodeError(codeErrors);
+        }else{
+            const userPool = initUserPool();
+        const userData = {
+            Username: email,
+            Pool: userPool,
+        }
+        const cognitoUser = new CognitoUser(userData);
+
+        cognitoUser.confirmRegistration(confirmationCode, true, function(err, result) {
+            if (err) {
+                console.error(err.message || JSON.stringify(err));
+                return;
+            }
+            console.log(result);
+            onStateChange('signIn');
+        });
+        }
+    }
+
+    async function resendCode(){
+        const emailErrors = validateEmail(email);
+        if(emailErrors){
+            setEmailError(emailErrors);
+        }else{
+            const userPool = initUserPool();
+        const userData = {
+            Username: email,
+            Pool: userPool,
+        }
+        const cognitoUser = new CognitoUser(userData);
+
+        cognitoUser.resendConfirmationCode( function(err, result) {
+            if (err) {
+                console.error(err.message || JSON.stringify(err));
+                return;
+            }
+            console.log(result);
+        });
+        }
+    }
     
     
     return (
@@ -39,13 +89,16 @@ function ConfirmSignUp({authState, onStateChange, defaultEmail}: ConfirmSignUpPr
                 <Text style={styles.label}>Enter your Confirmation Code</Text>
                 <TextInput style={styles.textInput} onChangeText={(text)=> setConfirmationCode(text)} value={confirmationCode}></TextInput>
             </View>
+            {codeError && (
+                    <Text style={styles.errorText}>{codeError}</Text>
+                )}
 
-            <TouchableOpacity style={styles.button} onPress={()=> console.log('confirming code...')}>
+            <TouchableOpacity style={styles.button} onPress={()=> confirmNewUser()}>
                 <Text style={styles.buttonText}>Confirm</Text>
             </TouchableOpacity>
 
             <View style={styles.secondaryButtonContainer}>
-                <TouchableOpacity style={styles.secondaryButton} onPress={()=> console.log('resending code...')}>
+                <TouchableOpacity style={styles.secondaryButton} onPress={()=> resendCode()}>
                     <Text style={styles.secondaryButtonText}>Resend Code</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.secondaryButton} onPress={()=> onStateChange('signIn')}>

@@ -25,8 +25,7 @@ export default function SignUp({authState, onStateChange}: SignUpProps){
         const passwordErrors = validatePassword(password);
         if(!emailErrors && !passwordErrors){
                 //Attempt to register new user with Cognito
-                const poolData = initUserPool();
-                const userPool = new CognitoUserPool(poolData);
+                const userPool = initUserPool();
 
                 const attributeList = [];
                 const dataEmail = {
