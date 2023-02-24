@@ -1,8 +1,8 @@
-import { AuthenticationDetails, CognitoUser } from "amazon-cognito-identity-js";
-import { useState } from "react";
+import { AuthenticationDetails, CognitoUser, CognitoUserSession } from "amazon-cognito-identity-js";
+import { useEffect, useState } from "react";
 import { View } from "react-native";
 import { initUserPool } from "../utils/config";
-import { SessionContext, AccountContextType } from "./Session";
+import { SessionContext } from "./Session";
 
 function Account(props: any){
 
@@ -34,10 +34,37 @@ function Account(props: any){
             }
             );
     }
+
+    function getSession(){
+        const Pool = initUserPool();
+        const user = Pool.getCurrentUser();
+        if(user){
+            user.getSession((err: Error | null, session: CognitoUserSession | null)=> {
+                if(err){
+                    console.log(err);
+                    setStatus(false);
+                }else{
+                    console.log('valid session?:', session?.isValid());
+                    setStatus(true);
+                }
+            });
+        }else{
+            setStatus(false);
+        }
+    }
+
+    function logout(){
+        const Pool = initUserPool();
+        const user = Pool.getCurrentUser();
+        if(user){
+            user.signOut();
+        }
+        setStatus(false);
+    }
     
     return (
         <View style={{flex: 1}}>
-            <SessionContext.Provider value={{authenticate, status}}>
+            <SessionContext.Provider value={{authenticate, getSession, logout, status}}>
             {props.children}
             </SessionContext.Provider>
         </View>

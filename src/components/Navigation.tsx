@@ -9,7 +9,6 @@ function Navigation(){
 
     const Stack = createNativeStackNavigator();
     const session = useContext(SessionContext);
-    console.log('status:', session.status);
 
     return(
     <NavigationContainer>

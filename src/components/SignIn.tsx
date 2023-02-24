@@ -35,47 +35,7 @@ export default function SignIn({authState, onStateChange}: SignInProps){
         const emailErrors = validateEmail(email);
         const passwordErrors = validatePassword(password);
         if(!emailErrors && !passwordErrors){
-            if(!!authenticate){
-                authenticate(email, password);
-            }
-                // //Attempt to SignIn with Cognito
-                // const authData = {
-                //     Username: email,
-                //     Password: password,
-                // };
-                // const authDetails = new AuthenticationDetails(authData);
-
-                // const userPool = initUserPool();
-                // const userData = {
-                //     Username: email,
-                //     Pool: userPool,
-                // };
-                // const cognitoUser = new CognitoUser(userData);
-
-                //     await cognitoUser.authenticateUser(authDetails, {
-                //         onSuccess: function(result){
-                //             const accessToken = result.getAccessToken().getJwtToken();
-                //             console.log(accessToken);
-                //             const loginKey = `cognito-idp.${AWS_REGION}.amazonaws.com/${AWS_USER_POOL_ID}`;
-                //             AWS.config.region = AWS_REGION;
-                //             AWS.config.credentials = new AWS.CognitoIdentityCredentials({
-                //                 IdentityPoolId: '...', // your identity pool id here
-                //                 Logins: {
-                //                     // Change the key below according to the specific region your user pool is in.
-                //                     loginKey : result
-                //                         .getIdToken()
-                //                         .getJwtToken(),
-                //                 },
-                //             });
-
-
-                //         },
-                //         onFailure(err){
-                //             console.error(err.message || JSON.stringify(err));
-                //         }
-                //     }
-                //     );
- 
+            authenticate(email, password);
         }else{
             setEmailError(emailErrors);
             setPasswordError(passwordErrors);
