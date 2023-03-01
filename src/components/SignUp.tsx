@@ -64,7 +64,7 @@ export default function SignUp({navigation}: SignUpProps){
 
             <View style={styles.inputContainer}>
                 <Text style={styles.label}>Password</Text>
-                <TextInput style={styles.textInput} onChangeText={(text)=> setPassword(text)} value={password}></TextInput>
+                <TextInput style={styles.textInput} secureTextEntry={true} onChangeText={(text)=> setPassword(text)} value={password}></TextInput>
                 {passwordError && (
                     <Text style={styles.errorText}>{passwordError}</Text>
                 )}

@@ -1,4 +1,4 @@
-import { AuthenticationDetails, CognitoUser, CognitoUserSession } from "amazon-cognito-identity-js";
+import { AuthenticationDetails, CognitoUser, CognitoUserSession, UserData } from "amazon-cognito-identity-js";
 import { useEffect, useState } from "react";
 import { View } from "react-native";
 import { initUserPool } from "../utils/config";
